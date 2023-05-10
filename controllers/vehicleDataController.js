@@ -55,7 +55,8 @@ module.exports = {
      * locationController.create()
      */
     create: function (req, res) {
-        var vehicleData = new vehicleDataModel({                                       
+        var vehicleData = new vehicleDataModel({
+            postedBy : req.session.userId,                                    
             longitude : req.body.longitude,
             latitude : req.body.latitude,
             gyro_x : req.body.gyro_x,
@@ -68,7 +69,7 @@ module.exports = {
             timestamp : new Date()
         });
 
-        location.save(function (err, vehicleData) {
+        vehicleData.save(function (err, vehicleData) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when creating location',
