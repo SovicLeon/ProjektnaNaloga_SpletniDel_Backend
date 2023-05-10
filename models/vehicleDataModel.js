@@ -14,4 +14,4 @@ var vehicleDataSchema = new Schema({
     'timestamp' : Date,
 });
 
-module.exports = mongoose.model('vehicleData', vehicelDataSchema);
+module.exports = mongoose.model('vehicleData', vehicleDataSchema);
