@@ -12,6 +12,10 @@ var vehicleDataSchema = new Schema({
     'acc_y' : Number,
     'acc_z' : Number,
     'timestamp' : Date,
+    'postedBy' : {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+   },
 });
 
 module.exports = mongoose.model('vehicleData', vehicleDataSchema);
