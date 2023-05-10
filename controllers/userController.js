@@ -125,26 +125,18 @@ module.exports = {
         });
     },
 
-    showRegister: function(req, res){
-        res.render('user/register');
-    },
-
-    showLogin: function(req, res){
-        res.render('user/login');
-    },
-
     login: function(req, res, next){
         UserModel.authenticate(req.body.username, req.body.password, function(err, user){
             if(err || !user){
-                var err = new Error('Wrong username or paassword');
+                var err = new Error('Wrong username or password');
                 err.status = 401;
                 return next(err);
             }
             req.session.userId = user._id;
-            //res.redirect('/users/profile');
-            return res.json(user);
+            // Return user and session ID in the response
+            return res.json({user, sessionID: req.sessionID});
         });
-    },
+    },    
 
     profile: function(req, res,next){
         UserModel.findById(req.session.userId)
