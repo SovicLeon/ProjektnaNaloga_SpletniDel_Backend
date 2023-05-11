@@ -1,10 +1,8 @@
 var express = require('express');
 // Vključimo multer za file upload
-var multer = require('multer');
-var upload = multer({dest: 'public/images/'});
 
 var router = express.Router();
-var photoController = require('../controllers/photoController.js');
+var sectionTrafficController = require('../controllers/sectionTrafficController.js');
 
 function requiresLogin(req, res, next){
     if(req.body && req.body.sessionID){
@@ -18,14 +16,12 @@ function requiresLogin(req, res, next){
     }
 }
 
-router.get('/', photoController.list);
-//router.get('/publish', requiresLogin, photoController.publish);
-router.get('/:id', photoController.show);
+router.get('/', sectionTrafficController.list);
 
-router.post('/', requiresLogin, upload.single('image'), photoController.create);
+router.get('/:id', sectionTrafficController.show);
 
-router.put('/:id', photoController.update);
+router.post('/', requiresLogin, sectionTrafficController.create);
 
-router.delete('/:id', photoController.remove);
+router.delete('/:id', requiresLogin, sectionTrafficController.remove);
 
 module.exports = router;

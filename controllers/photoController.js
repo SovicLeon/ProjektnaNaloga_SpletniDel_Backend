@@ -56,11 +56,8 @@ module.exports = {
      */
     create: function (req, res) {
         var photo = new PhotoModel({
-			name : req.body.name,
 			path : "/images/"+req.file.filename,
 			postedBy : req.session.userId,
-			views : 0,
-			likes : 0
         });
 
         photo.save(function (err, photo) {
@@ -132,8 +129,4 @@ module.exports = {
             return res.status(204).json();
         });
     },
-
-    publish: function(req, res){
-        return res.render('photo/publish');
-    }
 };
