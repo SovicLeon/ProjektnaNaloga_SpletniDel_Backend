@@ -19,7 +19,7 @@ router.get('/', vehicleDataController.list);
 
 router.get('/:id', vehicleDataController.show);
 
-router.post('/', requiresLogin, vehicleDataController.create);
+router.post('/', requiresLogin, vehicleDataController.process);
 
 router.delete('/:id', requiresLogin, vehicleDataController.remove);
 
