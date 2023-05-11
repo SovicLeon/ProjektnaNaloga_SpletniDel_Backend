@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('vaja3:server');
+var debug = require('debug')('projectbackend:server');
 var http = require('http');
 
 /**
