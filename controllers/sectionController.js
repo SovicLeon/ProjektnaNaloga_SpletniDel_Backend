@@ -60,8 +60,10 @@ module.exports = {
             acc_average : req.body.acc_average,
             acc_max : req.body.acc_max,
             acc_min : req.body.acc_min,
-            start_pos : req.body.start_pos,
-            end_pos : req.body.end_pos,
+            start_pos_lat : req.body.start_pos_lat,
+            start_pos_lon : req.body.start_pos_lon,
+            end_pos_lat : req.body.end_pos_lat,
+            end_pos_lon : req.body.end_pos_lon,
             duration : req.body.duration,
             time : req.body.time, 
             timestamp : new Date()

@@ -9,9 +9,12 @@ var sectionSchema = new Schema({
 	'acc_average' : Number,
 	'acc_max' : Number,
 	'acc_min' : Number,
-    'start_pos' : Number,
-	'end_pos' : Number,
+    'start_pos_lat' : Number,
+	'start_pos_lon' : Number,
+	'end_pos_lat' : Number,
+	'end_pos_lon' : Number,
 	'duration' : Number,
+	'time' : Date,
     'timestamp' : Date
 });
 

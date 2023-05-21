@@ -7,9 +7,7 @@ var router = express.Router();
 var photoController = require('../controllers/photoController.js');
 
 function requiresLogin(req, res, next){
-    if(req.body && req.body.sessionID){
-        // If the sessionID exists in the request body, set it as a property of the request object
-        req.sessionID = req.body.sessionID;
+    if(req.session && req.session.userId){
         return next();
     } else{
         var err = new Error("You must be logged in to view this page");
