@@ -6,8 +6,8 @@ var vehicleDataSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
+    'latitude' : Number,
 	'longitude' : Number,
-	'latitude' : Number,
 	'gyro_x' : Number,
     'gyro_y' : Number,
     'gyro_z' : Number,

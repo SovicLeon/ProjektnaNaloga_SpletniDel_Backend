@@ -134,7 +134,7 @@ module.exports = {
             }
             req.session.userId = user._id;
             // Return user and session ID in the response
-            return res.json({user, sessionID: req.sessionID});
+            return res.json(user);
         });
     },    
 

@@ -4,9 +4,7 @@ var router = express.Router();
 var vehicleDataController = require('../controllers/vehicleDataController.js');
 
 function requiresLogin(req, res, next){
-    if(req.body && req.body.sessionID){
-        // If the sessionID exists in the request body, set it as a property of the request object
-        req.sessionID = req.body.sessionID;
+    if(req.session && req.session.userId){
         return next();
     } else{
         var err = new Error("You must be logged in to view this page");
@@ -15,11 +13,13 @@ function requiresLogin(req, res, next){
     }
 }
 
+router.get('/getLastLocation', requiresLogin, vehicleDataController.getLastLocation);
+
 router.get('/', vehicleDataController.list);
 
 router.get('/:id', vehicleDataController.show);
 
-router.post('/', requiresLogin, vehicleDataController.process);
+router.post('/', requiresLogin, vehicleDataController.create);
 
 router.delete('/:id', requiresLogin, vehicleDataController.remove);
 
