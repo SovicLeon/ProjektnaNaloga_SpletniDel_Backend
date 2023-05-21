@@ -70,7 +70,28 @@ module.exports = {
     
                 return res.json(vehicleData);
             });
-    },    
+    },
+
+    getLastDrive: function (req, res) {
+        vehicleDataModel.find({ postedBy: req.session.userId })
+            .sort({ timestamp: -1 })
+            .exec(function (err, vehicleData) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting vehicleData.',
+                        error: err
+                    });
+                }
+    
+                if (!vehicleData) {
+                    return res.status(404).json({
+                        message: 'No such vehicleData'
+                    });
+                }
+    
+                return res.json(vehicleData);
+            });
+    },  
 
     /**
      * vehicleDataController.create()

@@ -14,6 +14,7 @@ function requiresLogin(req, res, next){
 }
 
 router.get('/getLastLocation', requiresLogin, vehicleDataController.getLastLocation);
+router.get('/getLastDrive', requiresLogin, vehicleDataController.getLastDrive);
 
 router.get('/', vehicleDataController.list);
 
