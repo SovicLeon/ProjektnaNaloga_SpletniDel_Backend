@@ -20,6 +20,8 @@ router.get('/', vehicleDataController.list);
 
 router.get('/:id', vehicleDataController.show);
 
+router.post('/process', requiresLogin, vehicleDataController.process);
+
 router.post('/', requiresLogin, vehicleDataController.create);
 
 router.delete('/:id', requiresLogin, vehicleDataController.remove);
