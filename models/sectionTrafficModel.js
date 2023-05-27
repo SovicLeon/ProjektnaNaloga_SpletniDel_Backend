@@ -6,9 +6,11 @@ var sectionTrafficSchema = new Schema({
 	 	type: Schema.Types.ObjectId,
 	 	ref: 'section'
 	},
-	'speed' : Number,
+	'location' : String,
 	'numOfVehicles' : Number,
+	'speed' : Number,
 	'timeBetweenVehicles' : Number,
+	'congestion' : Number,
 	'timestamp' : Date
 });
 
