@@ -1,5 +1,7 @@
 var vehicleDataModel = require('../models/vehicleDataModel.js');
 var sectionModel = require('../models/sectionModel.js');
+const axios = require('axios');
+const sectionTrafficModel = require('../models/sectionTrafficModel'); // Assuming you have a separate file for the sectionTraffic model
 
 /**
  * vehicleDataController.js
@@ -13,19 +15,19 @@ module.exports = {
      */
     list: function (req, res) {
         vehicleDataModel.find()
-        .populate('postedBy')
-        .exec(function (err, vehicleData) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting vehicleData.',
-                    error: err
-                });
-            }
-            var data = [];
-            data.vehicleData = vehicleData;
-            //return res.render('vehicleData/list', data);
-            return res.json(vehicleData);
-        });
+            .populate('postedBy')
+            .exec(function (err, vehicleData) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting vehicleData.',
+                        error: err
+                    });
+                }
+                var data = [];
+                data.vehicleData = vehicleData;
+                //return res.render('vehicleData/list', data);
+                return res.json(vehicleData);
+            });
     },
 
     /**
@@ -34,7 +36,7 @@ module.exports = {
     show: function (req, res) {
         var id = req.params.id;
 
-        vehicleDataModel.findOne({_id: id}, function (err, vehicleData) {
+        vehicleDataModel.findOne({ _id: id }, function (err, vehicleData) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting vehicleData.',
@@ -62,13 +64,13 @@ module.exports = {
                         error: err
                     });
                 }
-    
+
                 if (!vehicleData) {
                     return res.status(404).json({
                         message: 'No such vehicleData'
                     });
                 }
-    
+
                 return res.json(vehicleData);
             });
     },
@@ -83,16 +85,16 @@ module.exports = {
                         error: err
                     });
                 }
-    
+
                 if (!vehicleData) {
                     return res.status(404).json({
                         message: 'No such vehicleData'
                     });
                 }
-    
+
                 return res.json(vehicleData);
             });
-    },  
+    },
 
     /**
      * vehicleDataController.create()
@@ -111,9 +113,9 @@ module.exports = {
             acc_z: req.body.acc_z,
             timestamp: new Date()
         });
-    
+
         var timeTreshold = 10;
-    
+
         vehicleDataModel.find({ postedBy: req.session.userId }, function (err, vehicleDataFind) {
             if (err) {
                 return res.status(500).json({
@@ -121,27 +123,27 @@ module.exports = {
                     error: err
                 });
             }
-    
+
             if (!vehicleDataFind) {
                 return res.status(404).json({
                     message: 'No such vehicleData found for user.'
                 });
             }
-    
+
             console.log(vehicleDataFind.length);
-    
+
             if (vehicleDataFind.length > 0) {
                 console.log(vehicleDataFind)
             }
 
             // sort timestamps in ascending order            
             const sortedTimestampsDesc = vehicleDataFind.sort((a, b) => {
-            return new Date(b.timestamp) - new Date(a.timestamp);
+                return new Date(b.timestamp) - new Date(a.timestamp);
             });
-            
+
             const latestTimestamp = sortedTimestampsDesc[0].timestamp;
-            const earliestTimestamp = sortedTimestampsDesc[sortedTimestampsDesc.length-1].timestamp;
-            
+            const earliestTimestamp = sortedTimestampsDesc[sortedTimestampsDesc.length - 1].timestamp;
+
             console.log("Earliest timestamp:", earliestTimestamp);
             console.log("Latest timestamp:", latestTimestamp);
 
@@ -157,7 +159,7 @@ module.exports = {
             console.log(timeDiffInMs);
 
             console.log(`Time difference: ${days} days, ${hours % 24} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`);
-    
+
             // Save the new vehicle data
             vehicleData.save(function (err, vehicleData) {
                 if (err) {
@@ -166,7 +168,7 @@ module.exports = {
                         error: err
                     });
                 }
-    
+
                 return res.status(201).json(vehicleData);
                 //return res.redirect('/vehicleDatas');
             });
@@ -187,7 +189,7 @@ module.exports = {
             acc_z: req.body.acc_z,
             timestamp: new Date()
         });
-    
+
         vehicleDataModel.find({ postedBy: req.session.userId }, function (err, vehicleDataFind) {
             if (err) {
                 return res.status(500).json({
@@ -195,21 +197,21 @@ module.exports = {
                     error: err
                 });
             }
-    
+
             if (!vehicleDataFind) {
                 return res.status(404).json({
                     message: 'No such vehicleData found for user.'
                 });
             }
-    
+
             console.log(vehicleDataFind.length);
-    
-    
+
+
             // sort timestamps in ascending order            
             const sortedTimestampsDesc = vehicleDataFind.sort((a, b) => {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
-            
+
             for (let i = 0; i < sortedTimestampsDesc.length; i++) {
                 let dist = haversineDistance([req.body.latitude, req.body.longitude], [sortedTimestampsDesc[i].latitude, sortedTimestampsDesc[i].longitude]);
                 if (dist > 10) {
@@ -217,7 +219,7 @@ module.exports = {
                 }
                 console.log("Dist: " + dist);
             }
-    
+
             vehicleData.save(function (err, vehicleData) {
                 if (err) {
                     return res.status(500).json({
@@ -225,7 +227,7 @@ module.exports = {
                         error: err
                     });
                 }
-    
+
                 return res.status(201).json(vehicleData);
             });
         });
@@ -235,9 +237,9 @@ module.exports = {
         // Get start and end time from the request
         var startTime = new Date(req.body.start);
         var endTime = new Date(req.body.end);
-        
+
         // Query vehicle data in the given time range for the user
-        vehicleDataModel.find({ 
+        vehicleDataModel.find({
             postedBy: req.session.userId,
             timestamp: { $gte: startTime, $lte: endTime }
         }).sort('timestamp').exec(function (err, vehicleDataFind) {
@@ -247,59 +249,106 @@ module.exports = {
                     error: err
                 });
             }
-    
+
             if (!vehicleDataFind || vehicleDataFind.length == 0) {
                 return res.status(404).json({
                     message: 'No such vehicleData found for user.'
                 });
             }
-    
+
             // Function to create section
             const createSection = (start, end, accSum, accMax, accMin, i) => {
                 let duration = (end.timestamp - start.timestamp) / 1000; // duration in seconds
                 var section = new sectionModel({
-                    postedBy : req.session.userId,
-                    acc_average : accSum / i,
-                    acc_max : accMax,
-                    acc_min : accMin,
-                    start_pos_lat : start.latitude,
-                    start_pos_lon : start.longitude,
-                    end_pos_lat : end.latitude,
-                    end_pos_lon : end.longitude,
-                    duration : duration,
-                    time : start.timestamp,
-                    timestamp : new Date()
+                    postedBy: req.session.userId,
+                    acc_average: accSum / i,
+                    acc_max: accMax,
+                    acc_min: accMin,
+                    start_pos_lat: start.latitude,
+                    start_pos_lon: start.longitude,
+                    end_pos_lat: end.latitude,
+                    end_pos_lon: end.longitude,
+                    duration: duration,
+                    time: start.timestamp,
+                    timestamp: new Date()
                 });
-    
-                section.save(function (err, section) {
+
+                section.save(function (err, savedSection) {
                     if (err) {
                         return res.status(500).json({
                             message: 'Error when creating section',
                             error: err
                         });
                     }
+
+                    //console.log('Saved section object ID:', savedSection._id);
+
+                    const endPosLat = savedSection.end_pos_lat;
+                    const endPosLon = savedSection.end_pos_lon;
+
+                    // Make a GET request to the specified URL
+                    axios({
+                        method: 'get',
+                        url: 'http://localhost:3002/trafficCounter/coords',
+                        data: {
+                            lat: endPosLat,
+                            lon: endPosLon
+                        }
+                    })
+                        .then(response => {
+                            if (response.status === 200) {
+                                const data = response.data;
+
+                                // Parse the date string into a Date object
+                                const dateString = data.data[4];
+                                const [day, month, year, hour, minute, second] = dateString.split(/\.|:|\s/);
+                                const timestamp = new Date(`${month}/${day}/${year} ${hour}:${minute}:${second}`);
+
+
+                                const sectionTraffic = new sectionTrafficModel({
+                                    fromSection: savedSection._id,
+                                    speed: parseInt(data.data[0]),
+                                    numOfVehicles: parseInt(data.data[1]),
+                                    timeBetweenVehicles: parseFloat(data.data[2]),
+                                    timestamp: timestamp
+                                });
+
+                                sectionTraffic.save(function (err, savedSectionTraffic) {
+                                    /*if (err) {
+                                        console.log('Error when creating sectionTraffic:', err);
+                                    } else {
+                                        console.log('Saved sectionTraffic object:', savedSectionTraffic);
+                                    }*/
+                                });
+                            } else {
+                                console.log('Traffic counter request failed with status code:', response.status);
+                            }
+                        })
+                        .catch(error => {
+                            //console.log('Error when making traffic counter request:', error);
+                        });
                 });
-            }
-    
+            };
+
             // Variables to hold section data
             let sectionStart = vehicleDataFind[0];
             let totalDistance = 0;
             let accSum = 0, accMax = -Infinity, accMin = Infinity;
             let counter = 0;
-            
+
             // Create sections
             for (let i = 1; i < vehicleDataFind.length; i++) {
                 let dist = haversineDistance(
-                    [sectionStart.latitude, sectionStart.longitude], 
+                    [sectionStart.latitude, sectionStart.longitude],
                     [vehicleDataFind[i].latitude, vehicleDataFind[i].longitude]
                 );
-    
+
                 totalDistance += dist;
                 accSum += vehicleDataFind[i].acc_acceleration;
                 accMax = Math.max(accMax, vehicleDataFind[i].acc_acceleration);
                 accMin = Math.min(accMin, vehicleDataFind[i].acc_acceleration);
                 counter++;
-    
+
                 // Create new section if total distance is equal to or exceeds distance
                 if (totalDistance >= 0.25) {
                     createSection(sectionStart, vehicleDataFind[i], accSum, accMax, accMin, counter);
@@ -312,36 +361,36 @@ module.exports = {
                     counter = 0;
                 }
             }
-    
+
             // Create last section if there's remaining data
             if (counter > 0) {
                 createSection(sectionStart, vehicleDataFind[vehicleDataFind.length - 1], accSum, accMax, accMin, counter);
             }
-    
+
             return res.status(200).json({
                 message: 'Data processed successfully',
                 dataCount: vehicleDataFind.length
             });
         });
-    },   
-    
+    },
+
 
     /**
      * vehicleDataController.create()
      */
     create: function (req, res) {
         var vehicleData = new vehicleDataModel({
-            postedBy : req.session.userId,                                    
-            longitude : req.body.longitude,
-            latitude : req.body.latitude,
-            gyro_x : req.body.gyro_x,
-            gyro_y : req.body.gyro_y,
-            gyro_z : req.body.gyro_z,
-            acc_acceleration : req.body.acc_acceleration,
-            acc_x : req.body.acc_x,
-            acc_y : req.body.acc_y,
-            acc_z : req.body.acc_z,
-            timestamp : new Date()
+            postedBy: req.session.userId,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
+            gyro_x: req.body.gyro_x,
+            gyro_y: req.body.gyro_y,
+            gyro_z: req.body.gyro_z,
+            acc_acceleration: req.body.acc_acceleration,
+            acc_x: req.body.acc_x,
+            acc_y: req.body.acc_y,
+            acc_z: req.body.acc_z,
+            timestamp: new Date()
         });
 
         vehicleData.save(function (err, vehicleData) {
@@ -391,15 +440,15 @@ function haversineDistance(coords1, coords2) {
     var R = 6371; // Radius of the earth in km
 
     var x1 = lat2 - lat1;
-    var dLat = toRad(x1);  
+    var dLat = toRad(x1);
     var x2 = lon2 - lon1;
     var dLon = toRad(x2);
-    
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);  
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-    var d = R * c; 
+
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
 
     return d;
 }
