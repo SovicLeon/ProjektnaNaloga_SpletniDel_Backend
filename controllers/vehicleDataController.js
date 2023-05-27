@@ -1,7 +1,7 @@
 var vehicleDataModel = require('../models/vehicleDataModel.js');
 var sectionModel = require('../models/sectionModel.js');
-const axios = require('axios');
-const sectionTrafficModel = require('../models/sectionTrafficModel'); // Assuming you have a separate file for the sectionTraffic model
+var axios = require('axios');
+var sectionTrafficModel = require('../models/sectionTrafficModel');
 
 /**
  * vehicleDataController.js
