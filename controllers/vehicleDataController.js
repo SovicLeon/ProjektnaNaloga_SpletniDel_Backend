@@ -307,9 +307,11 @@ module.exports = {
 
                                 const sectionTraffic = new sectionTrafficModel({
                                     fromSection: savedSection._id,
-                                    speed: parseInt(data.data[0]),
-                                    numOfVehicles: parseInt(data.data[1]),
+                                    location: data.location,
+                                    numOfVehicles: parseInt(data.data[0]),
+                                    speed: parseInt(data.data[1]),
                                     timeBetweenVehicles: parseFloat(data.data[2]),
+                                    congestion: parseFloat(data.data[3]),
                                     timestamp: timestamp
                                 });
 
