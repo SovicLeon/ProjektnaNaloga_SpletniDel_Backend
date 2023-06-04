@@ -61,9 +61,6 @@ module.exports = {
 			postedBy : req.session.userId,
         });
 
-        const userIdFolder = path.join('../faces', req.session.userId);
-        fs.mkdirSync(userIdFolder, { recursive: true });
-
         photo.save(function (err, photo) {
             if (err) {
                 return res.status(500).json({
