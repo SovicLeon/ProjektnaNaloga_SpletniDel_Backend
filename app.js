@@ -23,7 +23,7 @@ var sectionRouter = require('./routes/sectionRoutes');
 var app = express();
 
 var cors = require('cors');
-var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001', 'http://192.168.0.31:3000', 'http://192.168.0.31:3001', 'http://86.58.50.249:3000', 'http://86.58.50.249:3001', 'http://86.58.50.249'];
 app.use(cors({
   credentials: true,
   origin: function(origin, callback){
