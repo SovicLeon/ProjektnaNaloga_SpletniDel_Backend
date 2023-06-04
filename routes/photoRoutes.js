@@ -1,7 +1,22 @@
 var express = require('express');
 // Vključimo multer za file upload
 var multer = require('multer');
-var upload = multer({dest: 'public/images/'});
+const path = require ('path');
+const fs = require('fs');
+//var upload = multer({dest: 'public/images/'});
+
+var upload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+        const userIdFolder = path.join('public/images', req.session.userId);
+        fs.mkdirSync(userIdFolder, { recursive: true });
+        cb(null, userIdFolder);
+      },
+      filename: function (req, file, cb) {
+        cb(null, file.originalname);
+      }
+    })
+  });
 
 var router = express.Router();
 var photoController = require('../controllers/photoController.js');

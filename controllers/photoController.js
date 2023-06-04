@@ -1,5 +1,6 @@
 var PhotoModel = require('../models/photoModel.js');
-
+const fs = require('fs');
+const path = require('path');
 /**
  * photoController.js
  *
@@ -59,6 +60,9 @@ module.exports = {
 			path : "/images/"+req.file.filename,
 			postedBy : req.session.userId,
         });
+
+        const userIdFolder = path.join('../faces', req.session.userId);
+        fs.mkdirSync(userIdFolder, { recursive: true });
 
         photo.save(function (err, photo) {
             if (err) {
