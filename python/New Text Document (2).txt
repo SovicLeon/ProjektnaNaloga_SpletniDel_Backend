@@ -1,0 +1,6 @@
+const { spawn } = require('child_process');
+const createModelScript = spawn('python', ['faceCreateModel.py', "../public/images/646e4b24507f729f858afa21/right_folder", "faces_false", "my_face"]);
+createModelScript.stdout.on('data', (data) => {
+    const error = data.toString();
+    console.log(error);
+  });

@@ -1,6 +1,7 @@
 var PhotoModel = require('../models/photoModel.js');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 /**
  * photoController.js
  *
@@ -55,12 +56,48 @@ module.exports = {
     /**
      * photoController.create()
      */
+
     create: function (req, res) {
         var photo = new PhotoModel({
 			path : "/images/"+req.file.filename,
 			postedBy : req.session.userId,
         });
 
+        fs.access(`public/images/${req.session.userId}/${req.session.userId}.sav`, fs.constants.F_OK, (err) => {
+            if (err) {
+                const createModelScript = spawn('python', ['python/faceCreateModel.py', `public/images/${req.session.userId}`, "python/faces_false", `public/images/${req.session.userId}/${req.session.userId}`]);
+                createModelScript.stdout.on('data', (data) => {
+                    // Process and handle the output from the Python script
+                    const result = data.toString();
+                    console.log(result);
+                  });
+                createModelScript.stderr.on('data', (data) => {
+                    const error = data.toString();
+                    console.log(error);
+                  });
+            } else {
+                const files = fs.readdirSync(path.join('public/images', req.session.userId));
+                const sortedFiles = files.map((filename) => {
+                const filePath = path.join('public/images', req.session.userId, filename);
+                const stat = fs.statSync(filePath);
+                return {
+                    filename,
+                    createdAt: stat.birthtimeMs,
+                };
+                }).sort((a, b) => b.createdAt - a.createdAt);
+                const recentImage = sortedFiles[0].filename;
+                const faceTestScript = spawn('python', ['python/faceTestImage.py', `public/images/${req.session.userId}/${req.session.userId}.sav`, `public/images/${req.session.userId}/${recentImage}`]);
+                faceTestScript.stdout.on('data', (data) => {
+                    const result = data.toString();
+                    console.log(result);
+                  });
+                faceTestScript.stderr.on('data', (data) => {
+                    const error = data.toString();
+                    console.log(error);
+                  });
+            }
+        })
+        
         photo.save(function (err, photo) {
             if (err) {
                 return res.status(500).json({

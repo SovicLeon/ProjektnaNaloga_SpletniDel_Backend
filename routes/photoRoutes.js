@@ -13,10 +13,11 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
       const files = fs.readdirSync(path.join('public/images', req.session.userId));
-      const index = files.length + 1;
+      const index = (files.length + 1);
       const originalExtension = path.extname(file.originalname);
       const filename = path.basename(file.originalname, originalExtension);
       cb(null, `${filename}-${index}${originalExtension}`);
+      cb(null, `${filename}2-${index}${originalExtension}`);
     }
   });
   
