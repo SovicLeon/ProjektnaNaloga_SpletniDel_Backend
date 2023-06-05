@@ -102,17 +102,21 @@ module.exports = {
                     console.log(error);
                 });
                 faceTestScript.on('close', () => {
-                    if (testPassed) {
-                        console.log("true");
-                        return res.status(201).json(photo);
-                    } else {
-                        console.log("false");
-                        return res.status(500).json({
-                            message: 'Test failed',
-                            error: err
-                        });
-                    }
-                });
+                if (testPassed) {
+                    console.log("true");
+                    return res.status(201).json({
+                        photo,
+                        testPassed: true
+                    });
+                } else {
+                    console.log("false");
+                    return res.status(500).json({
+                        message: 'Test failed',
+                        error: err,
+                        testPassed: false
+                    });
+                }
+            });
             }
         })
     
